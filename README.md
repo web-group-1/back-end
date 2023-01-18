@@ -1,4 +1,4 @@
-## Selected title:
+## Selected title: IT-Studies
 
 ## Group members:
  - Biniam Seid         UGR/9483/13
