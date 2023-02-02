@@ -4,17 +4,20 @@ import * as argon from 'argon2';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { domainToASCII } from 'url';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private jwt: JwtService) {}
 
-  async signUp(dto: SignUpDto) {
+  async signUp(dto: SignUpDto): Promise<{token: string}> {
     // generate a dto
     let passwordHash = await argon.hash(dto.password);
     // add the new user
+    let newUser: User;
     try {
-      let newUser = await this.prisma.user.create({
+      newUser = await this.prisma.user.create({
         data: {
           firstName: dto.firstName,
           lastName: dto.lastName,
@@ -22,10 +25,6 @@ export class AuthService {
           hash: passwordHash,
         },
       });
-      // we want to delete the the password hash
-      delete newUser.hash;
-      // and then return the new user
-      return { newUser };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code == 'P2002') {
@@ -34,9 +33,14 @@ export class AuthService {
       }
       throw error;
     }
+    // we want to delete the the password hash
+    delete newUser.hash;
+    // and then return the new user
+    let token = await this.signToken(newUser.id, newUser.emailAddress)
+    return {token,}
   }
 
-  async signIn(dto: SignInDto) {
+  async signIn(dto: SignInDto): Promise<{token: string}> {
     // get a user from the database by email
     let user = await this.prisma.user.findUnique({
       where: {
@@ -56,6 +60,17 @@ export class AuthService {
     }
     // return the user
     delete user.hash
-    return {user,}
+    let token =  await this.signToken(user.id, user.emailAddress)
+    return {token,}
+  }
+
+  async signToken(userId: number, email: string): Promise<string> {
+    let payload =  {
+      sub: userId,
+      email: email
+    }
+
+    let token =  await this.jwt.signAsync(payload, {secret: "let's do it", expiresIn: "1h"})
+    return token
   }
 }
