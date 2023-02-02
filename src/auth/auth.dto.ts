@@ -20,3 +20,12 @@ export class SignUpDto {
     password: string
     
 }
+    
+export class SignInDto {
+    @IsNotEmpty()
+    @IsEmail()
+    email: string
+
+    @IsNotEmpty()
+    password: string
+}
