@@ -3,7 +3,6 @@ import { SignInDto, SignUpDto } from './auth.dto';
 import * as argon from 'argon2';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
-import { domainToASCII } from 'url';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 
@@ -16,7 +15,7 @@ export class AuthService {
     let passwordHash = await argon.hash(dto.password);
     // add the new user
     let newUser: User;
-    try {
+    try {``
       newUser = await this.prisma.user.create({
         data: {
           firstName: dto.firstName,
