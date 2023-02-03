@@ -1,11 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { UserUpdateDto } from 'src/auth/auth.dto';
+import { SignUpDto, UserUpdateDto } from 'src/auth/auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import * as argon from 'argon2'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UserService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService, private authService: AuthService) {}
+
+    async createUser(dto: SignUpDto): Promise<{token: string}> {
+        // generate a dto
+        let passwordHash = await argon.hash(dto.password);
+        // add the new user
+        let newUser: User;
+        try {``
+          newUser = await this.prisma.user.create({
+            data: {
+              firstName: dto.firstName,
+              lastName: dto.lastName,
+              emailAddress: dto.email,
+              hash: passwordHash,
+            },
+          });
+        } catch (error) {
+          if (error instanceof PrismaClientKnownRequestError) {
+            if (error.code == 'P2002') {
+              throw new ForbiddenException('Credentials taken');
+            }
+          }
+          throw error;
+        }
+        // we want to delete the the password hash
+        delete newUser.hash;
+        // and then return the new user
+        let token = await this.authService.signToken(newUser.id, newUser.emailAddress)
+        return {token,}
+      }
 
     async updateUSer(dto: UserUpdateDto, userId:number) {
         let updatedUser = await this.prisma.user.update({

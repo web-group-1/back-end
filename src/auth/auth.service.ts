@@ -10,35 +10,6 @@ import { User } from '@prisma/client';
 export class AuthService {
   constructor(private prisma: PrismaService, private jwt: JwtService) {}
 
-  async signUp(dto: SignUpDto): Promise<{token: string}> {
-    // generate a dto
-    let passwordHash = await argon.hash(dto.password);
-    // add the new user
-    let newUser: User;
-    try {``
-      newUser = await this.prisma.user.create({
-        data: {
-          firstName: dto.firstName,
-          lastName: dto.lastName,
-          emailAddress: dto.email,
-          hash: passwordHash,
-        },
-      });
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code == 'P2002') {
-          throw new ForbiddenException('Credentials taken');
-        }
-      }
-      throw error;
-    }
-    // we want to delete the the password hash
-    delete newUser.hash;
-    // and then return the new user
-    let token = await this.signToken(newUser.id, newUser.emailAddress)
-    return {token,}
-  }
-
   async signIn(dto: SignInDto): Promise<{token: string}> {
     // get a user from the database by email
     let user = await this.prisma.user.findUnique({

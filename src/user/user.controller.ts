@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
-import { UserUpdateDto } from '../auth/auth.dto'
+import { SignUpDto, UserUpdateDto } from '../auth/auth.dto'
 import { prisma } from '@prisma/client';
 import { UserService } from './user.service';
 
@@ -14,6 +14,11 @@ export class UserController {
     getMe(@Req() req: Request) {
         // we just return the currently logged in user object
         return req.user
+    }
+
+    @Post()
+    createUser(@Body() dto: SignUpDto) {
+        return this.userService.createUser(dto)
     }
 
     @UseGuards(AuthGuard("jwt"))

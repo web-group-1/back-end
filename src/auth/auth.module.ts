@@ -7,6 +7,7 @@ import { JwtStrategy } from './strategy';
 
 @Module({
   imports: [JwtModule.register({})],
+  exports: [AuthService],
   controllers: [AuthController],
   providers: [AuthService, PrismaService, JwtStrategy]
 })
