@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { SignUpDto, UserUpdateDto } from '../auth/auth.dto'
@@ -14,6 +14,13 @@ export class UserController {
     getMe(@Req() req: Request) {
         // we just return the currently logged in user object
         return req.user
+    }
+
+    @UseGuards(AuthGuard("jwt"))
+    @Get(':id')
+    getUser(@Param('id', new ParseIntPipe()) id: number) {
+        console.log(id)
+        return this.userService.getUser(id)
     }
 
     @Post()
