@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CourseDto } from './dto.course';
 
 @Injectable()
 export class CourseService {
@@ -22,5 +23,16 @@ export class CourseService {
             }
         })
         return {'created': user.createdCourses, registeredFor: user.courses}
+    }
+
+    async createCourse(dto: CourseDto, userId: number) {
+        let newCourse = await this.prisma.course.create({
+            data: {
+                authorId: userId,
+                name: dto.name,
+                description: dto.description
+            }
+        });
+        return newCourse
     }
 }
