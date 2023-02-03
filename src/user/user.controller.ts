@@ -4,10 +4,11 @@ import { Request } from 'express';
 import { SignUpDto, UserUpdateDto } from '../auth/auth.dto'
 import { prisma } from '@prisma/client';
 import { UserService } from './user.service';
+import { CourseService } from 'src/course/course.service';
 
 @Controller('users')
 export class UserController {
-    constructor(private userService: UserService) {}
+    constructor(private userService: UserService, private courseService: CourseService) {}
 
     @UseGuards(AuthGuard("jwt"))
     @Get('me')
@@ -38,5 +39,11 @@ export class UserController {
     @Delete()
     deleteUser(@Req() req: Request) {
         return this.userService.deleteUser(req.user['id'])
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get(':id/courses')
+    getUserCourses(@Param('id', new ParseIntPipe()) id: number) {
+        return this.courseService.getUserCourses(id)
     }
 }
