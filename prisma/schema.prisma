@@ -23,6 +23,7 @@ model User {
 model Course {
   id              Int    @id @default(autoincrement())
   name            String
+  description     String
   author          User   @relation(fields: [authorId], references: [id], name: "authorship")
   authorId        Int // relation scalar field  (used in the `@relation` attribute above)
   registeredUsers User[] @relation(name: "registration")
