@@ -55,7 +55,7 @@ export class CourseService {
 
         return updatedCourse;
     }
-    
+
     async deleteCourse(courseId: number, user: any) {
         // first verify if user is owner if the course
         let course = await this.getCourseById(courseId)
@@ -77,5 +77,16 @@ export class CourseService {
             throw new NotFoundException("the course does not exist")
         }
         return course
+    }
+
+    async registerUserForCourse(courseId: number, userId: number) {
+        return await this.prisma.course.update({
+            where: {id: courseId},
+            data: {
+                registeredUsers: {
+                    connect: {id: userId}
+                }
+            }
+        })
     }
 }
