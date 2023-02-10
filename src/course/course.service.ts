@@ -89,4 +89,40 @@ export class CourseService {
             }
         })
     }
+
+    async unregisterUserForCourse(courseId: number, userId: number) {
+        // check if user is registered for the course
+        let registeredUsers = await this.getUsersRegisteredForCourse(courseId);
+        if (registeredUsers.filter((e) => e.id == userId).length == 0) {
+          throw new ForbiddenException('user is not registered for the course');
+        }
+        // unregister the user
+        let course = await this.prisma.course.update({
+          where: { id: courseId },
+          data: {
+            registeredUsers: {
+              disconnect: { id: userId },
+            },
+          },
+        });
+    
+        return course;
+      }
+    
+      async getUsersRegisteredForCourse(courseId: number) {
+        let course = await this.prisma.course.findUnique({
+          where: { id: courseId },
+          include: {
+            registeredUsers: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                emailAddress: true,
+              },
+            },
+          },
+        });
+        return course.registeredUsers;
+      }
 }
