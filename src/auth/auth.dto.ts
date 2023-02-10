@@ -30,16 +30,3 @@ export class SignInDto {
     password: string
 }
 
-export class UserUpdateDto {
-    @IsNotEmpty()
-    @IsString()
-    firstName: string
-
-    @IsNotEmpty()
-    @IsString()
-    lastName: string
-
-    @IsNotEmpty()
-    @IsEmail()
-    email: string
-}
