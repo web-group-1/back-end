@@ -34,52 +34,48 @@ model Course {
   price: number;
 
   @Prop({ required: true })
-  duration: number; // Duration of the course in hours
+  duration: number; 
 
   @Prop({ enum: CourseLevel, default: CourseLevel.Beginner })
   level: CourseLevel;
 
   @Prop({ type: [String], default: [] })
-  requirements: string[]; // Array of course requirements
+  requirements: string[];
 
   @Prop({ type: [String], default: [] })
-  tags: string[]; // Array of course tags
+  tags: string[]; 
+  @Prop({ type: [String], default: [] })
+  sections: string[]; 
 
   @Prop({ type: [String], default: [] })
-  sections: string[]; // Array of section titles
-
-  @Prop({ type: [String], default: [] })
-  enrolledStudents: string[]; // Array of user IDs enrolled in the course
-
+  enrolledStudents: string[]; 
   @Prop({ default: 0 })
-  rating: number; // Average rating of the course
-
+  rating: number; 
   @Prop({ default: 0 })
-  totalRatings: number; // Total number of ratings given to the course
+  totalRatings: number;
 
   @Prop({ type: String, required: true })
-  imageUrl: string; // URL of the course image
+  imageUrl: string; 
 
   @Prop({ type: String, required: true })
-  videoUrl: string; // URL of the introduction video for the course
+  videoUrl: string; 
 
   @Prop({ type: String, required: true })
-  language: string; // Language of the course
+  language: string;
+  @Prop({ type: Date })
+  startDate: Date; 
 
   @Prop({ type: Date })
-  startDate: Date; // Start date of the course
-
-  @Prop({ type: Date })
-  endDate: Date; // End date of the course
+  endDate: Date; 
 
   @Prop({ default: false })
-  isPublished: boolean; // Indicates whether the course is published or not
+  isPublished: boolean; 
 
   @Prop({ type: [String], default: [] })
-  curriculum: string[]; // Array of curriculum items
+  curriculum: string[]; 
 
   @Prop({ type: [String], default: [] })
-  prerequisites: string[]; // Array of prerequisites for the course
+  prerequisites: string[];
 
   @Prop({ default: Date.now })
   createdAt: Date;
