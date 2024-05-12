@@ -21,10 +21,69 @@ model User {
 }
 
 model Course {
-  id              Int    @id @default(autoincrement())
-  name            String
-  description     String
-  author          User   @relation(fields: [authorId], references: [id], name: "authorship", onDelete: Cascade)
-  authorId        Int // relation scalar field  (used in the `@relation` attribute above)
-  registeredUsers User[] @relation(name: "registration")
+  @Prop({ required: true })
+  title: string;
+
+  @Prop({ required: true })
+  description: string;
+
+  @Prop({ required: true })
+  instructor: string;
+
+  @Prop({ required: true })
+  price: number;
+
+  @Prop({ required: true })
+  duration: number; // Duration of the course in hours
+
+  @Prop({ enum: CourseLevel, default: CourseLevel.Beginner })
+  level: CourseLevel;
+
+  @Prop({ type: [String], default: [] })
+  requirements: string[]; // Array of course requirements
+
+  @Prop({ type: [String], default: [] })
+  tags: string[]; // Array of course tags
+
+  @Prop({ type: [String], default: [] })
+  sections: string[]; // Array of section titles
+
+  @Prop({ type: [String], default: [] })
+  enrolledStudents: string[]; // Array of user IDs enrolled in the course
+
+  @Prop({ default: 0 })
+  rating: number; // Average rating of the course
+
+  @Prop({ default: 0 })
+  totalRatings: number; // Total number of ratings given to the course
+
+  @Prop({ type: String, required: true })
+  imageUrl: string; // URL of the course image
+
+  @Prop({ type: String, required: true })
+  videoUrl: string; // URL of the introduction video for the course
+
+  @Prop({ type: String, required: true })
+  language: string; // Language of the course
+
+  @Prop({ type: Date })
+  startDate: Date; // Start date of the course
+
+  @Prop({ type: Date })
+  endDate: Date; // End date of the course
+
+  @Prop({ default: false })
+  isPublished: boolean; // Indicates whether the course is published or not
+
+  @Prop({ type: [String], default: [] })
+  curriculum: string[]; // Array of curriculum items
+
+  @Prop({ type: [String], default: [] })
+  prerequisites: string[]; // Array of prerequisites for the course
+
+  @Prop({ default: Date.now })
+  createdAt: Date;
+
+  @Prop({ default: Date.now })
+  updatedAt: Date;
 }
